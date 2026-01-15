@@ -31,19 +31,26 @@ pipeline {
             }
         }
 
-        stage('Deploy to K8s') {
+        stage('Update Manifest') {
             steps {
-                script {
-                    echo 'Deploying to Minikube...'
-                    // We need to edit the YAML to use the new image tag ($BUILD_NUMBER)
-                    // We use "sed" to find the image line and replace it
-                    sh "sed -i 's|image: .*|image: $IMAGE_NAME:$BUILD_NUMBER|' k8s/backend.yaml"
-                    
-                    // Apply the changes
-                    sh 'kubectl apply -f k8s/backend.yaml'
-                    
-                    // Force rollout so we see changes immediately
-                    sh 'kubectl rollout restart deployment/backend-deployment'
+                // Inject the GitHub credentials so we can use them in the script
+                withCredentials([usernamePassword(credentialsId: 'github-credentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                    script {
+                        echo 'Updating manifest in Git...'
+                        
+                        // Configure Git Identity
+                        sh "git config user.email 'jenkins@example.com'"
+                        sh "git config user.name 'Jenkins Bot'"
+                        
+                        // Update the YAML file using sed (just like before, but on the file, not the cluster)
+                        sh "sed -i 's|image: .*|image: $IMAGE_NAME:$BUILD_NUMBER|' k8s/backend.yaml"
+                        
+                        // Commit and Push the change back to the repo
+                        // We use the variables to authenticate the URL
+                        sh "git add k8s/backend.yaml"
+                        sh "git commit -m 'Update backend image to version $BUILD_NUMBER [skip ci]'"
+                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/MartinS984/devops-capstone-project.git HEAD:main"
+                    }
                 }
             }
         }
