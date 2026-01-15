@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: martins984/capstone-backend:v1  # <--- CHANGE THIS!
+        image: martins984/capstone-backend:7
         ports:
         - containerPort: 3000
         env:
