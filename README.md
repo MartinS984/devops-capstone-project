@@ -50,3 +50,21 @@ During the implementation of this local DevOps pipeline, several challenges were
     1. Removed file from Git tracking: `git rm --cached kubeconfig_jenkins`
     2. Added file to `.gitignore`.
     3. (Note: In a production environment, this would require rotating all cluster credentials).
+
+## 📊 Monitoring & Verification
+
+The project includes a full observability stack using **Prometheus** and **Grafana**.
+
+### Accessing Dashboards
+1. **ArgoCD:** `kubectl port-forward svc/argocd-server -n argocd 8081:443` (Access at https://localhost:8081)
+2. **Grafana:** `kubectl port-forward svc/monitoring-stack-grafana -n monitoring 3000:80` (Access at http://localhost:3000)
+
+### How to Stress Test
+To visualize data in Grafana, generate load on the application:
+
+```bash
+# 1. Ensure Minikube tunnel is running
+minikube tunnel
+
+# 2. Run a loop to curl the frontend
+while true; do curl -s http://localhost > /dev/null; done
