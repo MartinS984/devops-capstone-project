@@ -16,7 +16,7 @@ It demonstrates a complete CI/CD workflow for a microservices application.
 2. [X] **Containerization:** Dockerize the application and push to Docker Hub.
 3. [X] **Orchestration:** Create Kubernetes manifests (Deployment & Service) and deploy to Minikube.
 4. [X] **CI/CD:** Set up Jenkins pipeline to automate the build and deploy process.
-5. [ ] **Monitoring:** (Optional) Configure Prometheus and Grafana.
+5. [X] **Monitoring:** (Optional) Configure Prometheus and Grafana.
 
 ## 🔧 Troubleshooting & Lessons Learned
 
